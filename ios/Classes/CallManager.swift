@@ -59,6 +59,28 @@ class CallManager: NSObject {
         }
     }
     
+    func clearAllCalls(handleType:String) {
+        //let calls = callController.callObserver.calls
+        if calls.isEmpty {
+            print("Machete# clearAllCalls already cleared")
+            return
+        }
+        for call in calls {
+            call.isClearing = true
+        }
+        for call in calls {
+            if(handleType == "answered_call" && call.isAnswered){
+                print("Machete# call accepted by user")
+                continue
+            }
+            print("Machete# clear call")
+            let endCallAction = CXEndCallAction(call: call.uuid)
+            let callTransaction = CXTransaction()
+            callTransaction.addAction(endCallAction)
+            self.requestCall(callTransaction, action: "clearAllCalls")
+        }
+    }
+    
     func activeCalls() -> [[String: Any?]] {
         let calls = callController.callObserver.calls
         var json = [[String: Any?]]()

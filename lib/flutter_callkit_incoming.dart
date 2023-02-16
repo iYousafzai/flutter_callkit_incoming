@@ -67,6 +67,11 @@ class FlutterCallkitIncoming {
     await _channel.invokeMethod("endAllCalls");
   }
 
+  /// Clear all calls.
+  static Future clearAllCalls(String handleType) async {
+    await _channel.invokeMethod("clearAllCalls", {'handleType': handleType});
+  }
+
   /// Get active calls.
   /// On iOS: return active calls from Callkit.
   /// On Android: only return last call

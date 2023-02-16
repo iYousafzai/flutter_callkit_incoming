@@ -50,7 +50,7 @@ import com.hiennv.flutter_callkit_incoming.CallkitIncomingBroadcastReceiver.Comp
 class CallkitIncomingActivity : Activity() {
 
     companion object {
-
+        var activity: Activity? = null
         const val ACTION_ENDED_CALL_INCOMING =
                 "com.hiennv.flutter_callkit_incoming.ACTION_ENDED_CALL_INCOMING"
 
@@ -63,6 +63,16 @@ class CallkitIncomingActivity : Activity() {
 
         fun getIntentEnded(context: Context) =
                 Intent("${context.packageName}.${ACTION_ENDED_CALL_INCOMING}")
+
+        fun finishCallKitIncoming(){
+            if (activity?.isFinishing == false) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    activity?.finishAndRemoveTask()
+                } else {
+                    activity?.finish()
+                }
+            }
+        }
 
     }
 
@@ -97,6 +107,7 @@ class CallkitIncomingActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        activity = this
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
             setTurnScreenOn(true)

@@ -56,6 +56,8 @@ class CallkitIncomingBroadcastReceiver : BroadcastReceiver() {
 
         const val EXTRA_CALLKIT_ACTION_FROM = "EXTRA_CALLKIT_ACTION_FROM"
 
+        const val ACTION_CALL_CLEAR = "ACTION_CALL_CLEAR"
+
         fun getIntentIncoming(context: Context, data: Bundle?) =
                 Intent(context, CallkitIncomingBroadcastReceiver::class.java).apply {
                     action = "${context.packageName}.${ACTION_CALL_INCOMING}"
@@ -97,6 +99,12 @@ class CallkitIncomingBroadcastReceiver : BroadcastReceiver() {
                     action = "${context.packageName}.${ACTION_CALL_CALLBACK}"
                     putExtra(EXTRA_CALLKIT_INCOMING_DATA, data)
                 }
+
+        fun getIntentClear(context: Context, data: Bundle?) =
+            Intent(context, CallkitIncomingBroadcastReceiver::class.java).apply {
+                action = "${context.packageName}.${ACTION_CALL_CLEAR}"
+                putExtra(EXTRA_CALLKIT_INCOMING_DATA, data)
+            }
     }
 
 
@@ -180,6 +188,15 @@ class CallkitIncomingBroadcastReceiver : BroadcastReceiver() {
                         val closeNotificationPanel = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
                         context.sendBroadcast(closeNotificationPanel)
                     }
+                } catch (error: Exception) {
+                    error.printStackTrace()
+                }
+            }
+            "${context.packageName}.${ACTION_CALL_CLEAR}" -> {
+                try {
+                    context.stopService(Intent(context, CallkitSoundPlayerService::class.java))
+                    callkitNotificationManager.clearIncomingNotification(data)
+                    removeCall(context, Data.fromBundle(data))
                 } catch (error: Exception) {
                     error.printStackTrace()
                 }

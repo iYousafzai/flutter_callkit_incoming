@@ -15,6 +15,8 @@ public class Call: NSObject {
     let isOutGoing: Bool
     
     var handle: String?
+    var isAnswered : Bool
+    var isClearing: Bool
     
     var stateDidChange: (() -> Void)?
     var hasStartedConnectDidChange: (() -> Void)?
@@ -88,10 +90,12 @@ public class Call: NSObject {
         return Date().timeIntervalSince(connectDate)
     }
     
-    init(uuid: UUID, data: Data, isOutGoing: Bool = false){
+    init(uuid: UUID, data: Data, isOutGoing: Bool = false, isAnswered: Bool = false, isClearing: Bool = false){
         self.uuid = uuid
         self.data = data
         self.isOutGoing = isOutGoing
+        self.isAnswered = isAnswered
+        self.isClearing = isClearing
     }
     
     var startCallCompletion: ((Bool) -> Void)?
@@ -110,6 +114,8 @@ public class Call: NSObject {
     
     func endCall(){
         hasEnded = true
+        isAnswered = false
+        isClearing = false
     }
     
     func startAudio() {

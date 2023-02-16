@@ -206,6 +206,34 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
                 "getDevicePushTokenVoIP" -> {
                     result.success("")
                 }
+
+                "clearAllCalls" -> {
+                    val calls = getDataActiveCalls(context)
+                    if(calls.isEmpty()) {
+                        println("Machete# clearAllCalls already cleared")
+                        result.success("OK")
+                        return
+                    }
+                    val hashMap = call.arguments as HashMap<*,*>
+                    val type = hashMap["handleType"]
+                    calls.forEach {
+                        if(type == "answered_call" && it.isAccepted){
+                            println("Machete# call accepted by user")
+                            return@forEach
+                        }
+                        else{
+                            println("Machete# clear call")
+                            context?.sendBroadcast(
+                                CallkitIncomingBroadcastReceiver.getIntentClear(
+                                    requireNotNull(context),
+                                    it.toBundle()
+                                )
+                            )
+                        }
+                    }
+                    CallkitIncomingActivity.finishCallKitIncoming()
+                    result.success("OK")
+                }
             }
         } catch (error: Exception) {
             result.error("error", error.message, "")
