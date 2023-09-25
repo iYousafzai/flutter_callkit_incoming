@@ -172,6 +172,14 @@ public class SwiftFlutterCallkitIncomingPlugin: NSObject, FlutterPlugin, CXProvi
                 self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_INCOMING, data.toJSON())
                 self.endCallNotExist(data)
             }
+            else {
+                if let error = error {
+                    if error._code == CXErrorCodeIncomingCallError.Code.filteredByDoNotDisturb.rawValue {
+                        print("Machete CXErrorCodeIncomingCallError DnD")
+                        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_INCOMING, [ "DnD": true ])
+                    }
+                }
+            }
         }
     }
     
